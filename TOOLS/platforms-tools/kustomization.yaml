@@ -8,5 +8,7 @@ resources:
   - prometheus-stack
   - kubecost
   - reloader
-  - jaeger
+  - redis-cluster
   - traefik
+  - goldilocks
+  - loki
