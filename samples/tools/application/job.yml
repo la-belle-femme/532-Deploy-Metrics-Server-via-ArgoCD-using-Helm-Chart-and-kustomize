@@ -1,0 +1,14 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: data-migration
+  namespace: s10
+spec:
+  template:
+    spec:
+      containers:
+        - name: migrate
+          image: busybox
+          command: ["echo", "Running migration job..."]
+      restartPolicy: Never
+  backoffLimit: 3
