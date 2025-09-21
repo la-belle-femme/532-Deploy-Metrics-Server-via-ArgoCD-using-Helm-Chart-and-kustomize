@@ -1,0 +1,21 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: connect-config
+  labels:
+    app: connect
+  namespace: s10
+data:
+  APP_NAME: "Connect"
+  APP_ENV: "production"
+  APP_DEBUG: "false"
+  APP_URL: "https://backend.dev.webforxtech.com"
+  DB_CONNECTION: "mysql"
+  DB_HOST: "database-2.cloysmqm6m20.us-east-1.rds.amazonaws.com"
+  DB_PORT: "3306"
+  WEB_URL: "https://frontend.dev.webforxtech.com"
+  DB_DATABASE: "connect_staging_db"
+  DB_USERNAME: "connect_backend"
+  LOG_CHANNEL: "stack"
+  LOG_DEPRECATIONS_CHANNEL: "null"
+  LOG_LEVEL: "debug"

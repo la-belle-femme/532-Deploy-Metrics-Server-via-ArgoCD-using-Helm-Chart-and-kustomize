@@ -1,0 +1,16 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: cleanup-job
+  namespace: s10
+spec:
+  schedule: "*/5 * * * *"   # runs every 5 minutes
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+            - name: cleanup
+              image: busybox
+              command: ["echo", "Cleaning up old files..."]
+          restartPolicy: OnFailure
