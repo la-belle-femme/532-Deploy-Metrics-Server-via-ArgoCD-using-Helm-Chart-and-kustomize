@@ -8,8 +8,8 @@ metadata:
 spec:
   project: platform-tools
   source:
-    repoURL: https://git.edusuc.net/WEBFORX/ArgoCD-gitops
-    targetRevision: HEAD
+    repoURL: https://github.com/la-belle-femme/532-Deploy-Metrics-Server-via-ArgoCD-using-Helm-Chart-and-kustomize.git
+    targetRevision: main
     path: TOOLS/metrics-server
   destination:
     server: https://kubernetes.default.svc
