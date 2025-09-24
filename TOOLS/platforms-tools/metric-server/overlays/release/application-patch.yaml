@@ -1,0 +1,76 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: metrics-server
+spec:
+  # Release environment configuration (www.connect.com)
+  source:
+    helm:
+      values: |
+        # Release-specific overrides (maximum reliability)
+        replicas: 5  # Maximum availability for public release
+        
+        # Enterprise-grade resources for public release
+        resources:
+          requests:
+            cpu: 300m
+            memory: 768Mi
+          limits:
+            cpu: 1
+            memory: 2Gi
+        
+        # Infrastructure nodes for release
+        nodeSelector:
+          node-role.kubernetes.io/infra: "true"
+          tier: production
+        
+        # Maximum pod disruption budget for release
+        podDisruptionBudget:
+          enabled: true
+          minAvailable: 3  # Always keep majority running
+        
+        # Strict anti-affinity for release HA
+        affinity:
+          podAntiAffinity:
+            requiredDuringSchedulingIgnoredDuringExecution:
+            - labelSelector:
+                matchLabels:
+                  app.kubernetes.io/name: metrics-server
+              topologyKey: kubernetes.io/hostname
+          # Zone-level anti-affinity for disaster recovery
+          podAntiAffinity:
+            preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: 100
+              podAffinityTerm:
+                labelSelector:
+                  matchLabels:
+                    app.kubernetes.io/name: metrics-server
+                topologyKey: topology.kubernetes.io/zone
+        
+        # Highest priority class for release
+        priorityClassName: "system-cluster-critical"
+        
+        # Release monitoring and tracking labels
+        podLabels:
+          environment: release
+          cost-center: platform-engineering
+          public-endpoint: www.connect.com
+          backup-required: "true"
+          monitoring-tier: critical
+        
+        # Production-grade tolerations
+        tolerations:
+        - key: "node-role.kubernetes.io/infra"
+          operator: "Equal"
+          value: "true"
+          effect: "NoSchedule"
+        - key: "tier"
+          operator: "Equal" 
+          value: "production"
+          effect: "NoSchedule"
+  
+  # Completely manual sync for release environment
+  syncPolicy:
+    automated: {}  # No automation for release
+    syncOptions:
+      - CreateNamespace=false

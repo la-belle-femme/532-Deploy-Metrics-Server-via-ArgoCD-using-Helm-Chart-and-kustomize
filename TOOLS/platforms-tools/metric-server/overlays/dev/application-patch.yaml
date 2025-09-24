@@ -1,0 +1,38 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: metrics-server
+spec:
+  # Development environment configuration
+  source:
+    helm:
+      values: |
+        # Development-specific overrides
+        replicas: 1  # Single replica for dev
+        
+        # Minimal resources for development
+        resources:
+          requests:
+            cpu: 50m
+            memory: 128Mi
+          limits:
+            cpu: 100m
+            memory: 256Mi
+        
+        # No node selector for dev (can run anywhere)
+        nodeSelector: {}
+        
+        # No pod disruption budget needed for dev
+        podDisruptionBudget:
+          enabled: false
+        
+        # Dev-specific monitoring labels
+        podLabels:
+          environment: dev
+          cost-center: development
+  
+  # Auto-sync for development
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true

@@ -1,0 +1,18 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+# Reference base configuration
+resources:
+  - ../../base
+
+# Environment-specific name suffix
+nameSuffix: -dev
+
+# Environment-specific patches
+patchesStrategicMerge:
+  - application-patch.yaml
+
+# Environment-specific labels
+commonLabels:
+  environment: dev
+  deployment-branch: develop

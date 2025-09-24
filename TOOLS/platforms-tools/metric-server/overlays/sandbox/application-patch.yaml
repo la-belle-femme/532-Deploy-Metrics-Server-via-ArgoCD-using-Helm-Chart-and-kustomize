@@ -1,0 +1,51 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: metrics-server
+spec:
+  # Sandbox/UAT environment configuration
+  source:
+    helm:
+      values: |
+        # Sandbox-specific overrides
+        replicas: 2  # HA for UAT testing
+        
+        # UAT-appropriate resources
+        resources:
+          requests:
+            cpu: 100m
+            memory: 200Mi
+          limits:
+            cpu: 200m
+            memory: 400Mi
+        
+        # Infrastructure nodes for sandbox
+        nodeSelector:
+          node-role.kubernetes.io/infra: "true"
+        
+        # Pod disruption budget for UAT stability
+        podDisruptionBudget:
+          enabled: true
+          minAvailable: 1
+        
+        # Anti-affinity for HA testing
+        affinity:
+          podAntiAffinity:
+            preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: 100
+              podAffinityTerm:
+                labelSelector:
+                  matchLabels:
+                    app.kubernetes.io/name: metrics-server
+                topologyKey: kubernetes.io/hostname
+        
+        # Sandbox-specific monitoring labels
+        podLabels:
+          environment: sandbox
+          cost-center: qa-testing
+  
+  # Auto-sync for sandbox (UAT environment)
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true

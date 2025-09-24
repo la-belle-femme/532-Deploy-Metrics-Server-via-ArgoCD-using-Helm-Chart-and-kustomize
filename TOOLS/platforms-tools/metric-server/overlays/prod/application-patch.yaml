@@ -1,0 +1,62 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: metrics-server
+spec:
+  # Production environment configuration
+  source:
+    helm:
+      values: |
+        # Production-specific overrides
+        replicas: 3  # High availability for production
+        
+        # Production-grade resources
+        resources:
+          requests:
+            cpu: 200m
+            memory: 512Mi
+          limits:
+            cpu: 500m
+            memory: 1Gi
+        
+        # Infrastructure nodes for production
+        nodeSelector:
+          node-role.kubernetes.io/infra: "true"
+        
+        # Strong pod disruption budget for production
+        podDisruptionBudget:
+          enabled: true
+          minAvailable: 2  # Always keep 2 replicas running
+        
+        # Anti-affinity for production HA
+        affinity:
+          podAntiAffinity:
+            requiredDuringSchedulingIgnoredDuringExecution:  # Required (not preferred)
+            - labelSelector:
+                matchLabels:
+                  app.kubernetes.io/name: metrics-server
+              topologyKey: kubernetes.io/hostname
+        
+        # Priority class for critical workloads
+        priorityClassName: "system-cluster-critical"
+        
+        # Production monitoring labels
+        podLabels:
+          environment: production
+          cost-center: platform-engineering
+          backup-required: "true"
+        
+        # Production-specific tolerations
+        tolerations:
+        - key: "node-role.kubernetes.io/infra"
+          operator: "Equal"
+          value: "true"
+          effect: "NoSchedule"
+  
+  # Manual sync for production (no auto-heal)
+  syncPolicy:
+    automated:
+      prune: false  # Manual pruning for production safety
+      selfHeal: false  # Manual healing for production safety
+    syncOptions:
+      - CreateNamespace=false

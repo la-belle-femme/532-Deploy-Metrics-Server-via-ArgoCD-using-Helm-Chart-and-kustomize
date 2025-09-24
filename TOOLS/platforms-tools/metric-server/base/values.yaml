@@ -1,0 +1,48 @@
+# Default values override for Metrics Server Helm chart
+args:
+  - --kubelet-insecure-tls
+  - --kubelet-preferred-address-types=InternalIP
+
+replicas: 2
+
+resources:
+  requests:
+    cpu: 100m
+    memory: 200Mi
+  limits:
+    cpu: 200m
+    memory: 400Mi
+
+# Enterprise-grade configurations
+nodeSelector:
+  node-role.kubernetes.io/infra: "true"
+
+affinity:
+  podAntiAffinity:
+    preferredDuringSchedulingIgnoredDuringExecution:
+    - weight: 100
+      podAffinityTerm:
+        labelSelector:
+          matchLabels:
+            app.kubernetes.io/name: metrics-server
+        topologyKey: kubernetes.io/hostname
+
+securityContext:
+  runAsNonRoot: true
+  runAsUser: 10001
+  readOnlyRootFilesystem: true
+  allowPrivilegeEscalation: false
+  capabilities:
+    drop:
+    - ALL
+
+podDisruptionBudget:
+  enabled: true
+  minAvailable: 1
+
+# Monitoring integration with existing Prometheus stack
+# IMPORTANT: Verify the actual namespace where Prometheus Stack is deployed
+# Update this namespace to match: "monitoring", "observability", or "prometheus-system" 
+serviceMonitor:
+  enabled: true
+  namespace: monitoring  # 🔄 VERIFY: Update to match actual Prometheus Stack namespace
