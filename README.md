@@ -31,7 +31,11 @@ We use **ArgoCD** as the GitOps engine and **Kustomize** for environment-specifi
 - **Kyverno** → Policy enforcement and validation.  
 - **Linkerd** → Service mesh for secure, observable communication.  
 - **Loki** → Centralized log collection and querying.  
-- **Metrics Server** → Resource metrics for HPA.  
+- **Metrics Server** → Resource metrics for HPA. [Documentation](TOOLS/metrics-server/):
+  - [Deployment Guide](TOOLS/metrics-server/DEPLOYMENT.md)
+  - [Quick Start Guide](TOOLS/metrics-server/QUICKSTART.md)
+  - [Troubleshooting](TOOLS/metrics-server/TROUBLESHOOTING.md)
+  - [Examples & Use Cases](TOOLS/metrics-server/EXAMPLES.md)
 - **Prometheus Stack** → Monitoring and alerting with Grafana dashboards.  
 - **Redis Cluster** → In-memory data store with HA and sharding.  
 - **Reloader** → Auto-reload workloads on secret/config changes.  
